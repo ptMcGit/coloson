@@ -62,7 +62,6 @@ class ColosonTest < Minitest::Test
 
   end
 
-focus
 
   def test_it_wont_add_non_numbers
     response = post "/numbers/odds", number: "eleventy"
@@ -73,7 +72,11 @@ focus
   end
 
 
+focus
+
+
   def test_it_can_sum_numbers
+
     post "/numbers/primes", number: 7
     post "/numbers/primes", number: 541
     post "/numbers/primes", number: 31
@@ -83,8 +86,10 @@ focus
 
     body = JSON.parse response.body
     assert_equal "ok", body["status"]
-    assert_equal 579, body["sum"]
+    assert_equal 579, body["sum"]     #
   end
+
+
 
   def test_it_can_multiply_small_numbers
     1.upto(4).each do |i|

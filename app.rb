@@ -46,20 +46,20 @@ class Coloson < Sinatra::Base
 
   post "/numbers/evens" do
 
-if is_valid? params["number"]
-    if DB["evens"]
-      DB["evens"].push t_string
-    else
-      DB["evens"] = [t_string]
-    end
-    status 200
-    json "success"
+    if is_valid? params["number"]
+      if DB["evens"]
+        DB["evens"].push t_string
+      else
+        DB["evens"] = [t_string]
+      end
+      status 200
+      json "success"
 
     else
 
       status 422
       json "status": "error", "error": "Invalid number: #{params["number"]}"
-  end
+    end
 
   end
 
@@ -81,13 +81,60 @@ if is_valid? params["number"]
     end
   end
 
+  post "/numbers/primes" do
+    if is_valid? params["number"]
+      if DB["primes"]
+        DB["primes"].push t_string
+      else
+        DB["primes"] = [t_string]
+      end
+      status 200
+      json "success"
+
+    else
+
+      status 422
+      json "status": "error", "error": "Invalid number: #{params["number"]}"
+
+    end
+  end
+
+
   delete "/numbers/odds" do
     status 200
     binding.pry
     DB["odds"].delete(t_string)
 
     json "success"
+
   end
+
+  get "/numbers/primes/sum" do
+    status 200
+    json("status": "ok", "sum": DB["primes"].reduce(:+))
+  end
+
+  # post "/numbers/mine" do
+    #   status 200
+    #   json DB["primes"].reduce :+
+    # end
+
+    # if is_valid? params["number"]
+    #   if DB["primes"]
+    #     DB["primes"].push t_string
+    #   else
+    #     DB["primes"] = [t_string]
+    #   end
+    #   status 200
+    #   json "success"
+
+    # else
+
+    #   status 422
+    #   json "status": "error", "error": "Invalid number: #{params["number"]}"
+
+    # end
+
 
 
 end
