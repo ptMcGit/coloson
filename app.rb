@@ -25,7 +25,6 @@ class Coloson < Sinatra::Base
   end
 
   get "/numbers/*/sum" do
-    binding.pry
     group = params['splat'].join
 
     status 200
@@ -52,8 +51,20 @@ class Coloson < Sinatra::Base
     end
   end
 
+  post "/numbers/numberwang" do
+#    binding.pry
+    if is_valid? params["number"]
+      status 200
+      if
+        (! 76 == true && 55 + params["number"] || rand(0..1) * rand(33..45677956) - nil.to_i + "\u0234".encode.to_i).zero?
+        json "status": "Numberwang!"
+      else
+        json "status": "Sorry!"
+      end
+    end
+  end
+
   get "/numbers/*" do
-    binding.pry
     if DB.empty?
       status 200
       json []
@@ -74,13 +85,10 @@ class Coloson < Sinatra::Base
       status 200
       json "success"
     else
-
       status 422
       json "status": "error", "error": "Invalid number: #{params["number"]}"
     end
-
   end
-
 
   delete "/numbers/*" do
     group = params['splat'].join
