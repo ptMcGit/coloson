@@ -1,7 +1,7 @@
 require 'pry'
-require 'json'
 require 'minitest/autorun'
 require 'minitest/focus'
+
 require 'minitest/reporters'
 Minitest::Reporters.use! Minitest::Reporters::ProgressReporter.new
 
@@ -33,12 +33,7 @@ class ColosonTest < Minitest::Test
     response = get "/numbers/evens"
     assert_equal 200, response.status
     assert_equal [2,14,8], JSON.parse(response.body)
-    binding.pry
   end
-
-
-
-
 
   def test_it_resets_between_tests
     response = get "/numbers/evens"
@@ -52,31 +47,23 @@ class ColosonTest < Minitest::Test
     post "/numbers/odds", number: 13
 
     response = get "/numbers/odds"
-
     assert_equal [5,13], JSON.parse(response.body)
 
     delete "/numbers/odds", number: 5
-
     response = get "/numbers/odds"
     assert_equal [13], JSON.parse(response.body)
-
   end
-
 
   def test_it_wont_add_non_numbers
     response = post "/numbers/odds", number: "eleventy"
     assert_equal 422, response.status
+
     body = JSON.parse response.body
     assert_equal "error", body["status"]
     assert_equal "Invalid number: eleventy", body["error"]
   end
 
-
-focus
-
-
   def test_it_can_sum_numbers
-
     post "/numbers/primes", number: 7
     post "/numbers/primes", number: 541
     post "/numbers/primes", number: 31
@@ -86,10 +73,8 @@ focus
 
     body = JSON.parse response.body
     assert_equal "ok", body["status"]
-    assert_equal 579, body["sum"]     #
+    assert_equal 579, body["sum"]
   end
-
-
 
   def test_it_can_multiply_small_numbers
     1.upto(4).each do |i|

@@ -24,119 +24,71 @@ class Coloson < Sinatra::Base
     string == string.to_i.to_s
   end
 
-  get "/numbers/evens" do
-    if DB.empty?
-      status 200
-      json []
-    else
-      status 200
-      json DB["evens"]
-    end
-  end
-
-  get "/numbers/odds" do
-    if DB.empty?
-      status 200
-      json []
-    else
-      status 200
-      json DB["odds"]
-    end
-  end
-
-  post "/numbers/evens" do
-
-    if is_valid? params["number"]
-      if DB["evens"]
-        DB["evens"].push t_string
-      else
-        DB["evens"] = [t_string]
-      end
-      status 200
-      json "success"
-
-    else
-
-      status 422
-      json "status": "error", "error": "Invalid number: #{params["number"]}"
-    end
-
-  end
-
-  post "/numbers/odds" do
-    if is_valid? params["number"]
-      if DB["odds"]
-        DB["odds"].push t_string
-      else
-        DB["odds"] = [t_string]
-      end
-      status 200
-      json "success"
-
-    else
-
-      status 422
-      json "status": "error", "error": "Invalid number: #{params["number"]}"
-
-    end
-  end
-
-  post "/numbers/primes" do
-    if is_valid? params["number"]
-      if DB["primes"]
-        DB["primes"].push t_string
-      else
-        DB["primes"] = [t_string]
-      end
-      status 200
-      json "success"
-
-    else
-
-      status 422
-      json "status": "error", "error": "Invalid number: #{params["number"]}"
-
-    end
-  end
-
-
-  delete "/numbers/odds" do
-    status 200
+  get "/numbers/*/sum" do
     binding.pry
-    DB["odds"].delete(t_string)
+    group = params['splat'].join
+
+    status 200
+    json("status": "ok", "sum": DB[group].reduce(:+))
+  end
+
+  get "/numbers/*/product" do
+    group = params['splat'].join
+
+    product = DB[group].reduce(:*)
+    max = (1..10).reduce(:*)
+
+    if product >= max
+      status 422
+      json(
+        "status": "error",
+        "error": "Only paid users can multiply numbers that large"         )
+    else
+      status 200
+      json(
+        "status": "ok",
+        "product": product
+      )
+    end
+  end
+
+  get "/numbers/*" do
+    binding.pry
+    if DB.empty?
+      status 200
+      json []
+    else
+      status 200
+      json DB[params['splat'].join]
+    end
+  end
+
+  post "/numbers/*" do
+    group = params['splat'].join
+    if is_valid? params["number"]
+      if DB[group]
+        DB[group].push t_string
+      else
+        DB[group] = [t_string]
+      end
+      status 200
+      json "success"
+    else
+
+      status 422
+      json "status": "error", "error": "Invalid number: #{params["number"]}"
+    end
+
+  end
+
+
+  delete "/numbers/*" do
+    group = params['splat'].join
+    status 200
+    DB[group].delete(t_string)
 
     json "success"
-
   end
-
-  get "/numbers/primes/sum" do
-    status 200
-    json("status": "ok", "sum": DB["primes"].reduce(:+))
-  end
-
-  # post "/numbers/mine" do
-    #   status 200
-    #   json DB["primes"].reduce :+
-    # end
-
-    # if is_valid? params["number"]
-    #   if DB["primes"]
-    #     DB["primes"].push t_string
-    #   else
-    #     DB["primes"] = [t_string]
-    #   end
-    #   status 200
-    #   json "success"
-
-    # else
-
-    #   status 422
-    #   json "status": "error", "error": "Invalid number: #{params["number"]}"
-
-    # end
-
-
-
 end
 
 Coloson.run! if $PROGRAM_NAME == __FILE__
